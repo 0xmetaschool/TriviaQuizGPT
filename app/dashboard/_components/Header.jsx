@@ -26,6 +26,12 @@ function Header() {
                     `}
                     >Dashboard</li>
                 </Link>
+                <Link href={"/dashboard/custom_quiz"}>
+                    <li className={`hover:text-black hover:font-bold transition-all
+                    cursor-pointer
+                    ${path == '/dashboard/upgrade' && 'text-black font-bold'}
+                    `}>Custom Quiz</li>
+                </Link>
                 <Link href={"/dashboard/upgrade"}>
                     <li className={`hover:text-black hover:font-bold transition-all
                     cursor-pointer

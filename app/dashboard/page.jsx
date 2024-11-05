@@ -6,16 +6,19 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Trophy, Medal, Award } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { Loader2, Trophy, Medal, Award, Brain, Sparkles } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [quizData, setQuizData] = useState(null);
-  const [gameState, setGameState] = useState('setup'); // setup, playing, results
+  const [gameState, setGameState] = useState('setup');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState([]);
   const [score, setScore] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
   const [quizDetails, setQuizDetails] = useState({
     numberOfQuestions: "5",
     category: '',
@@ -76,42 +79,46 @@ const Dashboard = () => {
     const currentQuestion = quizData.questions[currentQuestionIndex];
     const isCorrect = selectedOptionIndex === currentQuestion.correctAnswer;
     
-    setUserAnswers(prev => [...prev, {
-      questionIndex: currentQuestionIndex,
-      selectedAnswer: selectedOptionIndex,
-      isCorrect
-    }]);
+    setShowAnswer(true);
+    setTimeout(() => {
+      setShowAnswer(false);
+      setUserAnswers(prev => [...prev, {
+        questionIndex: currentQuestionIndex,
+        selectedAnswer: selectedOptionIndex,
+        isCorrect
+      }]);
 
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-    }
+      if (isCorrect) {
+        setScore(prev => prev + 1);
+      }
 
-    if (currentQuestionIndex < quizData.questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-    } else {
-      setGameState('results');
-    }
+      if (currentQuestionIndex < quizData.questions.length - 1) {
+        setCurrentQuestionIndex(prev => prev + 1);
+      } else {
+        setGameState('results');
+      }
+    }, 1500);
   };
 
   const getReward = () => {
     const percentage = (score / quizData.questions.length) * 100;
     if (percentage >= 80) {
       return {
-        title: "Gold NFT Trophy",
-        icon: <Trophy className="w-16 h-16 text-yellow-500" />,
-        message: "Outstanding! You've earned our prestigious Gold NFT Trophy!"
+        title: "Master of Knowledge",
+        icon: <Trophy className="w-20 h-20 text-yellow-500 animate-bounce mx-auto" />,
+        message: "Exceptional performance! You're a true expert!"
       };
     } else if (percentage >= 60) {
       return {
-        title: "Silver Medal NFT",
-        icon: <Medal className="w-16 h-16 text-gray-400" />,
-        message: "Great job! You've earned a Silver Medal NFT!"
+        title: "Knowledge Seeker",
+        icon: <Medal className="w-20 h-20 text-gray-400 animate-pulse mx-auto" />,
+        message: "Great achievement! Keep pushing forward!"
       };
     } else {
       return {
-        title: "Bronze Achievement NFT",
-        icon: <Award className="w-16 h-16 text-orange-600" />,
-        message: "Good effort! You've earned a Bronze Achievement NFT!"
+        title: "Learning Explorer",
+        icon: <Award className="w-20 h-20 text-orange-600 animate-pulse mx-auto" />,
+        message: "Good start! Every question is a learning opportunity!"
       };
     }
   };
@@ -125,18 +132,21 @@ const Dashboard = () => {
   };
 
   const renderSetup = () => (
-    <Card className="max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">Create Your Trivia Quiz</CardTitle>
-        <CardDescription className="text-center">
-          Customize your quiz settings below
+    <Card className="max-w-md mx-auto bg-black/90 text-white border-white/20 mt-20">
+      <CardHeader className="space-y-4">
+        <div className="flex items-center justify-center space-x-2">
+          <Brain className="w-8 h-8 text-white animate-pulse" />
+          <CardTitle className="text-2xl font-bold">Trivia Quiz Arena</CardTitle>
+        </div>
+        <CardDescription className="text-gray-400">
+          Challenge yourself in the ultimate quiz experience
         </CardDescription>
       </CardHeader>
 
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="numberOfQuestions">Number of Questions (1-50)</Label>
+            <Label htmlFor="numberOfQuestions" className="text-white">Questions (1-50)</Label>
             <Input
               id="numberOfQuestions"
               type="number"
@@ -144,33 +154,33 @@ const Dashboard = () => {
               max="50"
               value={quizDetails.numberOfQuestions}
               onChange={(e) => handleChange('numberOfQuestions', e.target.value)}
-              className="w-full"
+              className="bg-white/10 border-white/20 text-white"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category" className="text-white">Category</Label>
             <Input
               id="category"
               placeholder="e.g., Science, History"
               value={quizDetails.category}
               onChange={(e) => handleChange('category', e.target.value)}
-              className="w-full"
+              className="bg-white/10 border-white/20 text-white"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="level">Difficulty Level</Label>
+            <Label htmlFor="level" className="text-white">Difficulty</Label>
             <Select 
               value={quizDetails.level} 
               onValueChange={(value) => handleChange('level', value)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white/10 border-white/20 text-white">
                 <SelectValue placeholder="Select difficulty" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-black text-white">
                 <SelectItem value="easy">Easy</SelectItem>
                 <SelectItem value="medium">Medium</SelectItem>
                 <SelectItem value="hard">Hard</SelectItem>
@@ -179,15 +189,15 @@ const Dashboard = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="type">Question Type</Label>
+            <Label htmlFor="type" className="text-white">Question Type</Label>
             <Select 
               value={quizDetails.type} 
               onValueChange={(value) => handleChange('type', value)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white/10 border-white/20 text-white">
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-black text-white">
                 <SelectItem value="multiple">Multiple Choice</SelectItem>
                 <SelectItem value="boolean">True/False</SelectItem>
               </SelectContent>
@@ -205,16 +215,16 @@ const Dashboard = () => {
       <CardFooter>
         <Button 
           onClick={handleSubmit} 
-          className="w-full" 
+          className="w-full bg-white text-black hover:bg-white/90 transition-all duration-300"
           disabled={loading || !quizDetails.category || !quizDetails.numberOfQuestions}
         >
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating Quiz...
+              Preparing Your Challenge with GroqAI...
             </>
           ) : (
-            'Start Quiz'
+            'Enter the Arena'
           )}
         </Button>
       </CardFooter>
@@ -223,13 +233,20 @@ const Dashboard = () => {
 
   const renderQuestion = () => {
     const question = quizData.questions[currentQuestionIndex];
+    const progress = ((currentQuestionIndex) / quizData.questions.length) * 100;
+
     return (
-      <Card className="max-w-2xl mx-auto">
+      <Card className="max-w-2xl mx-auto bg-black/90 text-white border-white/20">
         <CardHeader>
-          <CardTitle className="text-xl">
-            Question {currentQuestionIndex + 1} of {quizData.questions.length}
-          </CardTitle>
-          <CardDescription>
+          <div className="flex justify-between items-center mb-4">
+            <CardTitle className="text-xl">Question {currentQuestionIndex + 1}/{quizData.questions.length}</CardTitle>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-400">Score: {score}</span>
+              <Sparkles className="w-4 h-4 text-yellow-500" />
+            </div>
+          </div>
+          <Progress value={progress} className="h-2 bg-white/20" />
+          <CardDescription className="text-gray-400 mt-2">
             {quizData.metadata.category} - {quizData.metadata.level} Level
           </CardDescription>
         </CardHeader>
@@ -241,8 +258,14 @@ const Dashboard = () => {
                 <Button
                   key={index}
                   variant="outline"
-                  className="h-auto py-4 justify-start text-left"
-                  onClick={() => handleAnswer(index)}
+                  className={cn(
+                    "h-auto py-4 justify-start text-left transition-all duration-300",
+                    "bg-white/10 border-white/20 text-white hover:bg-white/20",
+                    showAnswer && index === question.correctAnswer && "bg-green-500/20 border-green-500",
+                    showAnswer && index !== question.correctAnswer && "opacity-50"
+                  )}
+                  onClick={() => !showAnswer && handleAnswer(index)}
+                  disabled={showAnswer}
                 >
                   {option}
                 </Button>
@@ -256,33 +279,43 @@ const Dashboard = () => {
 
   const renderResults = () => {
     const reward = getReward();
+    const percentage = (score / quizData.questions.length) * 100;
+
     return (
-      <Card className="max-w-2xl mx-auto">
+      <Card className="max-w-2xl mx-auto bg-black/90 text-white border-white/20">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">Quiz Complete!</CardTitle>
-          <CardDescription className="text-center text-lg">
-            You scored {score} out of {quizData.questions.length}
+          <CardTitle className="text-2xl text-center">Challenge Complete!</CardTitle>
+          <CardDescription className="text-center text-lg text-gray-400">
+            Final Score: {score}/{quizData.questions.length} ({percentage.toFixed(1)}%)
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center space-y-6">
+          <div className="flex flex-col items-center space-y-8">
             <div className="text-center">
-              {reward.icon}
+                <div className="items-center">{reward.icon}</div>
               <h3 className="text-xl font-bold mt-4">{reward.title}</h3>
-              <p className="text-gray-600 mt-2">{reward.message}</p>
+              <p className="text-gray-400 mt-2">{reward.message}</p>
             </div>
             
             <div className="w-full max-w-md space-y-4">
               {quizData.questions.map((question, index) => {
                 const userAnswer = userAnswers[index];
                 return (
-                  <div key={index} className={`p-4 rounded-lg ${userAnswer.isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
+                  <div 
+                    key={index} 
+                    className={cn(
+                      "p-4 rounded-lg border transition-all duration-300",
+                      userAnswer.isCorrect 
+                        ? "bg-green-500/20 border-green-500/40" 
+                        : "bg-red-500/20 border-red-500/40"
+                    )}
+                  >
                     <p className="font-medium">{question.question}</p>
-                    <p className="text-sm mt-2">
+                    <p className="text-sm mt-2 text-gray-400">
                       Your answer: {question.options[userAnswer.selectedAnswer]}
                     </p>
                     {!userAnswer.isCorrect && (
-                      <p className="text-sm text-green-600 mt-1">
+                      <p className="text-sm text-green-400 mt-1">
                         Correct answer: {question.options[question.correctAnswer]}
                       </p>
                     )}
@@ -293,8 +326,11 @@ const Dashboard = () => {
           </div>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Button onClick={resetQuiz} className="w-full max-w-xs">
-            Play Again
+          <Button 
+            onClick={resetQuiz} 
+            className="w-full max-w-xs bg-white text-black hover:bg-white/90 transition-all duration-300"
+          >
+            Challenge Again
           </Button>
         </CardFooter>
       </Card>
@@ -302,7 +338,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-8">
         {gameState === 'setup' && renderSetup()}
         {gameState === 'playing' && renderQuestion()}
