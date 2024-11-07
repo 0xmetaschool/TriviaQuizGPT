@@ -1,5 +1,5 @@
 # Trivia Quiz GPT
-An AI-powered trivia quiz app that allows users to create custom quizzes, attempt them, and view results at the end for an interactive quiz experience.
+An AI-driven trivia quiz app that lets users create custom quizzes, participate interactively, and receive insightful results upon completion.
 
 ## Table of Contents
   - [Live Demo](#live-demo)
