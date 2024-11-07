@@ -11,6 +11,7 @@ import { Loader2, Trophy, Medal, Award, Brain, Sparkles, Plus, Trash2, Share } f
 import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 
+// Function to encode quiz data for sharing
 const encodeQuizData = (quizData) => {
   const minifiedData = {
     t: quizData.title,
@@ -24,6 +25,7 @@ const encodeQuizData = (quizData) => {
   return encodeURIComponent(btoa(JSON.stringify(minifiedData)));
 };
 
+// Function to decode quiz data from a shared link
 const decodeQuizData = (encoded) => {
   try {
     const decoded = JSON.parse(atob(decodeURIComponent(encoded)));
@@ -42,6 +44,7 @@ const decodeQuizData = (encoded) => {
 };
 
 const CustomQuiz = () => {
+  // State variables to manage the quiz creation
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [gameState, setGameState] = useState('create');
@@ -60,6 +63,7 @@ const CustomQuiz = () => {
     }]
   });
 
+  // Check for shared quiz data in the URL on component mount
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const sharedQuiz = searchParams.get('quiz');
@@ -72,7 +76,8 @@ const CustomQuiz = () => {
       }
     }
   }, []);
-
+  
+  // Function to generate a shareable link for the quiz
   const generateShareLink = () => {
     try {
       const encoded = encodeQuizData(quizDetails);
@@ -89,7 +94,8 @@ const CustomQuiz = () => {
       return null;
     }
   };
-
+  
+  // Function to add a new question to the quiz
   const addQuestion = () => {
     setQuizDetails(prev => ({
       ...prev,
@@ -101,13 +107,15 @@ const CustomQuiz = () => {
     }));
   };
 
+  // Function to remove a question from the quiz
   const removeQuestion = (index) => {
     setQuizDetails(prev => ({
       ...prev,
       questions: prev.questions.filter((_, i) => i !== index)
     }));
   };
-
+ 
+   // Function to update a question or its options
   const updateQuestion = (index, field, value, optionIndex = null) => {
     setQuizDetails(prev => {
       const newQuestions = [...prev.questions];
@@ -122,6 +130,7 @@ const CustomQuiz = () => {
     });
   };
 
+  // Function to update quiz details (title and description)
   const handleQuizDetailsChange = (field, value) => {
     setQuizDetails(prev => ({
       ...prev,
@@ -129,13 +138,15 @@ const CustomQuiz = () => {
     }));
   };
 
+  // Function to start the quiz
   const startQuiz = () => {
     setGameState('playing');
     setCurrentQuestionIndex(0);
     setScore(0);
     setUserAnswers([]);
   };
-
+  
+  // Function to handle user's answer selection
   const handleAnswer = (selectedOptionIndex) => {
     const currentQuestion = quizDetails.questions[currentQuestionIndex];
     const isCorrect = selectedOptionIndex === currentQuestion.correctAnswer;
@@ -161,6 +172,7 @@ const CustomQuiz = () => {
     }, 1500);
   };
 
+   // Function to determine the reward based on the user's score
   const getReward = () => {
     const percentage = (score / quizDetails.questions.length) * 100;
     if (percentage >= 80) {
@@ -184,6 +196,7 @@ const CustomQuiz = () => {
     }
   };
 
+  // Function to reset the quiz and return to the creation state
   const resetQuiz = () => {
     setGameState('create');
     setCurrentQuestionIndex(0);
@@ -191,6 +204,7 @@ const CustomQuiz = () => {
     setScore(0);
   };
 
+  // Render the quiz creation screen
   const renderCreate = () => (
     <Card className="max-w-2xl mx-auto bg-black/90 text-white border-white/20">
       <CardHeader className="space-y-4">
@@ -303,6 +317,7 @@ const CustomQuiz = () => {
     </Card>
   );
 
+  // Render the question screen during gameplay
   const renderQuestion = () => {
     const question = quizDetails.questions[currentQuestionIndex];
     const progress = ((currentQuestionIndex) / quizDetails.questions.length) * 100;
@@ -349,6 +364,7 @@ const CustomQuiz = () => {
     );
   };
 
+  // Render the welcome screen for a shared quiz
   const renderWelcome = () => (
     <Card className="max-w-2xl mx-auto bg-black/90 text-white border-white/20">
       <CardHeader>
@@ -373,8 +389,7 @@ const CustomQuiz = () => {
     </Card>
   );
 
-   
-
+  // Render the results screen after completing the quiz
   const renderResults = () => {
     const reward = getReward();
     const percentage = (score / quizDetails.questions.length) * 100;

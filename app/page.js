@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
 import Header from "./dashboard/_components/Header";
-import Link from 'next/link';
 
+// Component to display a feature with a title and text
 const Feature = ({ title, text }) => (
   <div className="flex flex-col items-center space-y-3">
     <p className="font-bold text-lg text-black">{title}</p>
@@ -9,6 +8,7 @@ const Feature = ({ title, text }) => (
   </div>
 );
 
+// Component to wrap pricing plans, with optional "Recommended" badge
 const PriceWrapper = ({ children, isRecommended = false }) => (
   <div className={`relative p-8 shadow-${isRecommended ? "2xl" : "lg"} border border-${isRecommended ? "black" : "gray-200"} rounded-xl bg-white flex flex-col justify-between h-[450px] transform-${isRecommended ? "scale-105" : "none"} z-${isRecommended ? 1 : 0}`}>
     {isRecommended && (
@@ -20,6 +20,7 @@ const PriceWrapper = ({ children, isRecommended = false }) => (
   </div>
 );
 
+// Main Home component
 export default function Home() {
   return (
     <div className="relative flex flex-col justify-between min-h-screen overflow-hidden">

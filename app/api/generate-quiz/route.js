@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 
+// Function to generate questions using X AI API
 async function generateQuestionsWithXAI({ numberOfQuestions, category, level, type }) {
-  const systemPrompt = `You are a quiz generation assistant. Generate ${numberOfQuestions} ${level}-level ${type}-choice questions about ${category}. 
+// System prompt to instruct the AI on how to generate questions  
+const systemPrompt = `You are a quiz generation assistant. Generate ${numberOfQuestions} ${level}-level ${type}-choice questions about ${category}. 
 Your response must be a valid JSON array of question objects. Each object must strictly follow this format:
 {
   "question": "question text here",
@@ -10,7 +12,8 @@ Your response must be a valid JSON array of question objects. Each object must s
 }
 Do not include any explanatory text or markdown, only return the JSON array.`;
 
-  const userPrompt = `Generate ${numberOfQuestions} ${type}-choice questions about ${category} at ${level} difficulty level. 
+// User prompt to request the AI to generate questions
+const userPrompt = `Generate ${numberOfQuestions} ${type}-choice questions about ${category} at ${level} difficulty level. 
 Return them as a JSON array where each question has:
 - A "question" field with the question text
 - An "options" array with ${type === 'multiple' ? '4 options' : '2 options (True/False)'}
@@ -18,6 +21,7 @@ Return them as a JSON array where each question has:
 Example format: [{"question": "...", "options": [...], "correctAnswer": 0}]`;
 
   try {
+     // Make a POST request to the X AI API
     const response = await fetch('https://api.x.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -39,6 +43,7 @@ Example format: [{"question": "...", "options": [...], "correctAnswer": 0}]`;
       })
     });
 
+    // Handle API response errors
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || 'Failed to communicate with X AI');
@@ -68,6 +73,7 @@ Example format: [{"question": "...", "options": [...], "correctAnswer": 0}]`;
         }
       });
       
+      // Return the generated questions with additional metadata
       return {
         success: true,
         questions: questions.map((q, index) => ({
@@ -95,7 +101,9 @@ Example format: [{"question": "...", "options": [...], "correctAnswer": 0}]`;
   }
 }
 
+// POST handler for generating quiz questions
 export async function POST(req) {
+  // Check if the X AI API key is configured
   if (!process.env.X_AI_API_KEY) {
     return NextResponse.json(
       { error: 'X AI API key not configured' },
@@ -123,6 +131,7 @@ export async function POST(req) {
       );
     }
 
+    // Generate questions using the X AI API
     const result = await generateQuestionsWithXAI({
       numberOfQuestions,
       category,

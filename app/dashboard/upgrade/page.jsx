@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 
+// UpgradePage component to display upgrade options
 const UpgradePage = () => {
   return (
     <section className="py-20">

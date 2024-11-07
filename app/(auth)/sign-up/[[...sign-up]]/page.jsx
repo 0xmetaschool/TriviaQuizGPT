@@ -1,5 +1,6 @@
 import { SignUp } from '@clerk/nextjs'
 
+// Page component for rendering the SignUp form
 export default function Page() {
   return (<div style={{
     display: 'flex',
@@ -7,6 +8,6 @@ export default function Page() {
     alignItems: 'center',
     minHeight: '100vh',
   }}>
-   <SignUp />
+   <SignUp /> {/* Render the Clerk SignUp component */}
   </div>); 
 }

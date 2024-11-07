@@ -11,14 +11,16 @@ import { Loader2, Trophy, Medal, Award, Brain, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const Dashboard = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [quizData, setQuizData] = useState(null);
-  const [gameState, setGameState] = useState('setup');
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState([]);
-  const [score, setScore] = useState(0);
-  const [showAnswer, setShowAnswer] = useState(false);
+  // State variables to manage the quiz game
+  const [loading, setLoading] = useState(false);                       // Loading state for API calls
+  const [error, setError] = useState('');                              // Error message state
+  const [quizData, setQuizData] = useState(null);                      // Quiz data fetched from API
+  const [gameState, setGameState] = useState('setup');                 // Current state of the game (setup, playing, results)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Index of the current question
+  const [userAnswers, setUserAnswers] = useState([]);                  // Array to store user's answers
+  const [score, setScore] = useState(0);                               // User's score
+  const [showAnswer, setShowAnswer] = useState(false);                 // State to show/hide the correct answer
+  const [selectedAnswer, setSelectedAnswer] = useState(null);          // Currently selected answer
   const [quizDetails, setQuizDetails] = useState({
     numberOfQuestions: "5",
     category: '',
@@ -26,6 +28,7 @@ const Dashboard = () => {
     type: 'multiple'
   });
 
+   // Function to handle changes in quiz details
   const handleChange = (name, value) => {
     if (name === 'numberOfQuestions') {
       const numValue = value === '' ? '' : Math.max(1, Math.min(50, parseInt(value) || 1));
@@ -40,7 +43,8 @@ const Dashboard = () => {
       }));
     }
   };
-
+  
+  // Function to handle form submission and start the quiz
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -75,13 +79,17 @@ const Dashboard = () => {
     }
   };
 
+   // Function to handle user's answer selection
   const handleAnswer = (selectedOptionIndex) => {
     const currentQuestion = quizData.questions[currentQuestionIndex];
     const isCorrect = selectedOptionIndex === currentQuestion.correctAnswer;
     
+    setSelectedAnswer(selectedOptionIndex);
     setShowAnswer(true);
+
     setTimeout(() => {
       setShowAnswer(false);
+      setSelectedAnswer(null);
       setUserAnswers(prev => [...prev, {
         questionIndex: currentQuestionIndex,
         selectedAnswer: selectedOptionIndex,
@@ -100,6 +108,7 @@ const Dashboard = () => {
     }, 1500);
   };
 
+  // Function to determine the reward based on the user's score
   const getReward = () => {
     const percentage = (score / quizData.questions.length) * 100;
     if (percentage >= 80) {
@@ -122,7 +131,8 @@ const Dashboard = () => {
       };
     }
   };
-
+  
+  // Function to reset the quiz and return to the setup state
   const resetQuiz = () => {
     setGameState('setup');
     setQuizData(null);
@@ -131,6 +141,7 @@ const Dashboard = () => {
     setScore(0);
   };
 
+  // Render the setup screen
   const renderSetup = () => (
     <Card className="max-w-md mx-auto bg-black/90 text-white border-white/20 mt-20">
       <CardHeader className="space-y-4">
@@ -231,6 +242,7 @@ const Dashboard = () => {
     </Card>
   );
 
+   // Render the question screen
   const renderQuestion = () => {
     const question = quizData.questions[currentQuestionIndex];
     const progress = ((currentQuestionIndex) / quizData.questions.length) * 100;
@@ -261,8 +273,9 @@ const Dashboard = () => {
                   className={cn(
                     "h-auto py-4 justify-start text-left transition-all duration-300",
                     "bg-white/10 border-white/20 text-white hover:bg-white/20",
-                    showAnswer && index === question.correctAnswer && "bg-green-500/20 border-green-500",
-                    showAnswer && index !== question.correctAnswer && "opacity-50"
+                    showAnswer && index === question.correctAnswer && "bg-green-500/20 border-green-500 border-2",
+                    showAnswer && index === selectedAnswer && index !== question.correctAnswer && "bg-red-500/20 border-red-500 border-2",
+                    showAnswer && index !== selectedAnswer && index !== question.correctAnswer && "opacity-50"
                   )}
                   onClick={() => !showAnswer && handleAnswer(index)}
                   disabled={showAnswer}
@@ -277,6 +290,7 @@ const Dashboard = () => {
     );
   };
 
+  // Render the results screen
   const renderResults = () => {
     const reward = getReward();
     const percentage = (score / quizData.questions.length) * 100;
