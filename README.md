@@ -103,7 +103,7 @@ X_AI_API_KEY=your_X_API_key
 - Navigate to the "Dashboard" page
 - Select quiz categories including number of question, category, difficulty level and questions type
 - Based on user slected categories, AI genrates the quiz question and answers, now its time to enter into the Quiz arena
-- Users also have the option to create custom quizes as well.
+- Users also have the option to create custom quizes as well
 
 2. **Attempting a quiz:**
 - Each question will be presented with multiple choices or with a true/false choices 
