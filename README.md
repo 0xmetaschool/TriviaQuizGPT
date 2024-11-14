@@ -78,11 +78,11 @@ Open your browser and navigate to `http://localhost:3000`.
 
 ## How to Use the Application
 
-- Sign in using your Google account.
-- Choose your quiz settings by selecting the number of questions, category, difficulty, and question type.
-- Click "Enter the Arena" to join the quiz room.
-- Complete the AI-generated quiz by answering all the questions.
-- After finishing, you’ll be redirected to the results page with a detailed breakdown of your performance.
+1. Sign in using your Google account.
+2. Choose your quiz settings by selecting the number of questions, category, difficulty, and question type.
+3. Click "Enter the Arena" to join the quiz room.
+4. Complete the AI-generated quiz by answering all the questions.
+5. After finishing, you’ll be redirected to the results page with a detailed breakdown of your performance.
 
 ## Contributing
 
